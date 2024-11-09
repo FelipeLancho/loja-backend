@@ -13,6 +13,7 @@ public class Produto {
     public String nome;
     public String descricao;
     public float preco;
+    public boolean destaque;
     public float precoAntigo;
     public String imagem;
     public float valor;
