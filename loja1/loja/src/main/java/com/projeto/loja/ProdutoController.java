@@ -16,51 +16,43 @@ import org.springframework.web.bind.annotation.RestController;
 @CrossOrigin(origins = "*")
 @RestController
 public class ProdutoController {
+
     @Autowired
     ProdutoRepository bd;
 
-    @PostMapping("/api/produto")
-    public String gravar(@RequestBody Produto obj){ 
+    @PostMapping("/api/produtos/novo")
+    public String gravar(@RequestBody Produto obj) {
         bd.save(obj);
-        return "O produto"+ obj.getNome() + "foi gravado!";
+        return "O produto " + obj.getNome() + " foi gravado!";
     }
 
-    @PutMapping("/api/produto")
-    public String alterar(@RequestBody Produto obj){
-        bd.save(obj);
-        return "O produto"+ obj.getNome() + "foi alterado!";
-    }
-
-    @GetMapping("/api/produto/{codigo}")
-    public Produto carregar(@PathVariable int codigo){
-        Optional<Produto> obj = bd.findById(codigo);
-        if(obj.isPresent()){
-            return obj.get();
-        } else {
-            return null;
+    @PutMapping("/api/produtos/{id}")
+    public String alterar(@PathVariable int id, @RequestBody Produto obj) {
+        Optional<Produto> produtoExistente = bd.findById(id);
+        if (produtoExistente.isPresent()) {
+            obj.setId(id); 
+            bd.save(obj); 
+            return "O produto " + obj.getNome() + " foi alterado!";
         }
-        
+        return "Produto com ID " + id + " não encontrado!";
     }
 
-    @DeleteMapping("api/produto/{codigo}")
-    public String remover(@PathVariable int codigo){
-        bd.deleteById(codigo);
-        return "Produto"+ codigo +"removido com sucesso!";
+    @GetMapping("/api/produtos/{id}")
+    public Produto carregar(@PathVariable int id) {
+        Optional<Produto> obj = bd.findById(id);
+        return obj.orElse(null); 
     }
 
+    
+    @DeleteMapping("/api/produtos/{id}")
+    public String remover(@PathVariable int id) {
+        bd.deleteById(id);
+        return "Produto " + id + " removido com sucesso!";
+    }
+
+    
     @GetMapping("/api/produtos")
-    public List<Produto> todos(){
+    public List<Produto> todos() {
         return bd.findAll();
     }
-
-    @GetMapping("/api/produtos/vitrine")
-    public Optional<List<Produto>> listarVitrine(){
-        return bd.listarVitrine(301, 355);
-    }   
-
-    @GetMapping("/api/produtos/busca")
-    public Optional<List<Produto>> buscar(){
-        return bd.busca("Cadeira");
-    }
-
 }
