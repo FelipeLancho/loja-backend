@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
+import java.util.Map;
 @CrossOrigin(origins = "http://localhost:4200")
 @RestController
 @RequestMapping("/api/clientes") 
@@ -71,4 +71,15 @@ public class ClienteController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Credenciais inválidas.");
         }
     }
+
+    @PostMapping("/esqueci-senha")
+public ResponseEntity<String> esqueciSenha(@RequestBody Map<String, String> request) {
+    String email = request.get("email");
+    if (clienteRepository.existsByEmail(email)) {
+        return ResponseEntity.ok("E-mail de recuperação enviado para: " + email);
+    } else {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("E-mail não encontrado.");
+    }
+}
+
 }
